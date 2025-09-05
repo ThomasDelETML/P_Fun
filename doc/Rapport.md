@@ -27,7 +27,7 @@
 ## Introduction
 - Concevoir un logiciel pour afficher des graphiques sur des données
 - Objectifs pédagogiques et professionnels  
-- Résumé des fonctionnalités principales souhaitées  
+- Résumé des fonctionnalités principales souhaitées  :D
 
 ---
 
