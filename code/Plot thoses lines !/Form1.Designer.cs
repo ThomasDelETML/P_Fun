@@ -31,6 +31,7 @@
             this.btnChargerCSV = new System.Windows.Forms.Button();
             this.ChargerCSV = new System.Windows.Forms.OpenFileDialog();
             this.formsPlot1 = new ScottPlot.WinForms.FormsPlot();
+            this.mtbCsvName = new System.Windows.Forms.MaskedTextBox();
             this.SuspendLayout();
             // 
             // btnChargerCSV
@@ -57,17 +58,27 @@
             this.formsPlot1.TabIndex = 2;
             this.formsPlot1.Load += new System.EventHandler(this.formsPlot1_Load);
             // 
+            // mtbCsvName
+            // 
+            this.mtbCsvName.Location = new System.Drawing.Point(786, 21);
+            this.mtbCsvName.Name = "mtbCsvName";
+            this.mtbCsvName.Size = new System.Drawing.Size(134, 20);
+            this.mtbCsvName.TabIndex = 3;
+            this.mtbCsvName.MaskInputRejected += new System.Windows.Forms.MaskInputRejectedEventHandler(this.mtbCsvName_MaskInputRejected);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(992, 606);
+            this.Controls.Add(this.mtbCsvName);
             this.Controls.Add(this.formsPlot1);
             this.Controls.Add(this.btnChargerCSV);
             this.Name = "Form1";
             this.Text = "PlotThosesLines";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -75,6 +86,7 @@
         private System.Windows.Forms.Button btnChargerCSV;
         private System.Windows.Forms.OpenFileDialog ChargerCSV;
         private ScottPlot.WinForms.FormsPlot formsPlot1;
+        private System.Windows.Forms.MaskedTextBox mtbCsvName;
     }
 }
 

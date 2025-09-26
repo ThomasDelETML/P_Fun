@@ -82,6 +82,10 @@ namespace Plot_thoses_lines__
                     formsPlot1.Plot.Legend.IsVisible = true;
 
                     formsPlot1.Refresh();
+
+                    // Donne le nom du .csv au maskedTextBox
+                    mtbCsvName.Text = Path.GetFileName(path);
+
                 }
             }
             catch (Exception ex)
@@ -127,6 +131,11 @@ namespace Plot_thoses_lines__
         }
 
         private void formsPlot1_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void mtbCsvName_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
         {
 
         }
