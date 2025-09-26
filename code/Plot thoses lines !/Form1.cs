@@ -10,39 +10,84 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Globalization;
 using System.IO;
+using System.Globalization;
+using CsvHelper;
+using ScottPlot;
 
 namespace Plot_thoses_lines__
 {
     public partial class Form1 : Form
     {
+        private string csvFilePath = Path.Combine(Application.StartupPath, "data.csv");
         public Form1()
         {
             InitializeComponent();
 
-            // Création d'une série temporelle
-            var serie = new Series("Mesures");
-            serie.ChartType = SeriesChartType.Line; // Ligne pour le temps
-            serie.XValueType = ChartValueType.DateTime; // Axe X = DateTime
+            // Charge le CSV s'il existe déjà
+            if (File.Exists(csvFilePath))
+                LoadCsvAndPlot(csvFilePath);
+            else
+                MessageBox.Show("Le fichier data.csv n'existe pas.");
+        }
 
-            // Ajouter quelques données fictives
-            serie.Points.AddXY(DateTime.Now.AddMinutes(-4), 10);
-            serie.Points.AddXY(DateTime.Now.AddMinutes(-3), 20);
-            serie.Points.AddXY(DateTime.Now.AddMinutes(-2), 15);
-            serie.Points.AddXY(DateTime.Now.AddMinutes(-1), 25);
-            serie.Points.AddXY(DateTime.Now, 18);
+        private void LoadCsvAndPlot(string path)
+        {
+            try
+            {
+                using (var reader = new StreamReader(path))
+                using (var csv = new CsvHelper.CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Read();
+                    csv.ReadHeader();
+                    var headers = csv.HeaderRecord;
 
-            // Ajouter la série au Chart
-            chart1.Series.Clear();
-            chart1.Series.Add(serie);
+                    var xValues = new List<double>();
+                    var data = new Dictionary<string, List<double>>();
 
-            // Configurer les axes
-            chart1.ChartAreas[0].AxisX.LabelStyle.Format = "HH:mm:ss"; // Format des heures
-            chart1.ChartAreas[0].AxisX.MajorGrid.LineColor = System.Drawing.Color.LightGray;
-            chart1.ChartAreas[0].AxisY.MajorGrid.LineColor = System.Drawing.Color.LightGray;
+                    // Première colonne = X (ex: années ou temps), on saute
+                    foreach (var header in headers.Skip(1))
+                        data[header] = new List<double>();
 
-            // Optionnel : défilement/zoom
-            chart1.ChartAreas[0].AxisX.ScrollBar.Enabled = true;
-            chart1.ChartAreas[0].AxisX.ScaleView.Zoomable = true;
+                    while (csv.Read())
+                    {
+                        if (double.TryParse(csv.GetField(headers[0]), out double x))
+                            xValues.Add(x);
+                        else
+                            xValues.Add(double.NaN);
+
+                        foreach (var key in data.Keys.ToList())
+                        {
+                            if (double.TryParse(csv.GetField(key), out double val))
+                                data[key].Add(val);
+                            else
+                                data[key].Add(double.NaN);
+                        }
+                    }
+
+                    double[] dataX = xValues.ToArray();
+
+                    // Nettoie l'ancien graphe
+                    formsPlot1.Plot.Clear();
+
+                    foreach (var kvp in data)
+                    {
+                        double[] dataY = kvp.Value.ToArray();
+                        var scatter = formsPlot1.Plot.Add.Scatter(dataX, dataY);
+                        scatter.LegendText = kvp.Key; // Nom de la série = entête CSV
+                    }
+
+                    formsPlot1.Plot.Title("Mesures depuis CSV");
+                    formsPlot1.Plot.XLabel(headers[0]);
+                    formsPlot1.Plot.YLabel("Valeurs");
+                    formsPlot1.Plot.Legend.IsVisible = true;
+
+                    formsPlot1.Refresh();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Erreur lors du chargement du CSV : " + ex.Message);
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -57,10 +102,31 @@ namespace Plot_thoses_lines__
 
         private void btnChargerCSV_Click(object sender, EventArgs e) //button
         {
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
+            {
+                openFileDialog.InitialDirectory = @"C:\";
+                openFileDialog.Filter = "CSV files (*.csv)|*.csv";
+                openFileDialog.FilterIndex = 1;
+                openFileDialog.RestoreDirectory = true;
 
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
+                {
+                    string selectedFile = openFileDialog.FileName;
+
+                    // copie dans le dossier de l'application
+                    File.Copy(selectedFile, csvFilePath, true);
+
+                    LoadCsvAndPlot(csvFilePath);
+                }
+            }
         }
 
         private void ChargerCSV_FileOk(object sender, CancelEventArgs e) //openFileDialog
+        {
+
+        }
+
+        private void formsPlot1_Load(object sender, EventArgs e)
         {
 
         }
