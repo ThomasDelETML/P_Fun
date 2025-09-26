@@ -36,9 +36,9 @@
             // 
             // btnChargerCSV
             // 
-            this.btnChargerCSV.Location = new System.Drawing.Point(678, 12);
+            this.btnChargerCSV.Location = new System.Drawing.Point(873, 7);
             this.btnChargerCSV.Name = "btnChargerCSV";
-            this.btnChargerCSV.Size = new System.Drawing.Size(102, 37);
+            this.btnChargerCSV.Size = new System.Drawing.Size(112, 21);
             this.btnChargerCSV.TabIndex = 1;
             this.btnChargerCSV.Text = "Import a Chart";
             this.btnChargerCSV.UseVisualStyleBackColor = true;
@@ -52,17 +52,19 @@
             // formsPlot1
             // 
             this.formsPlot1.DisplayScale = 0F;
-            this.formsPlot1.Location = new System.Drawing.Point(-1, 59);
+            this.formsPlot1.Location = new System.Drawing.Point(-1, 34);
             this.formsPlot1.Name = "formsPlot1";
-            this.formsPlot1.Size = new System.Drawing.Size(993, 548);
+            this.formsPlot1.Size = new System.Drawing.Size(993, 573);
             this.formsPlot1.TabIndex = 2;
             this.formsPlot1.Load += new System.EventHandler(this.formsPlot1_Load);
             // 
             // mtbCsvName
             // 
-            this.mtbCsvName.Location = new System.Drawing.Point(786, 21);
+            this.mtbCsvName.Location = new System.Drawing.Point(428, 7);
+            this.mtbCsvName.MaximumSize = new System.Drawing.Size(200, 50);
+            this.mtbCsvName.MinimumSize = new System.Drawing.Size(4, 20);
             this.mtbCsvName.Name = "mtbCsvName";
-            this.mtbCsvName.Size = new System.Drawing.Size(134, 20);
+            this.mtbCsvName.Size = new System.Drawing.Size(200, 20);
             this.mtbCsvName.TabIndex = 3;
             this.mtbCsvName.MaskInputRejected += new System.Windows.Forms.MaskInputRejectedEventHandler(this.mtbCsvName_MaskInputRejected);
             // 

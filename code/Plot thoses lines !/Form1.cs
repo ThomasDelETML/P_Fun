@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Globalization;
 using System.IO;
-using System.Globalization;
 using CsvHelper;
 using ScottPlot;
 
@@ -76,7 +75,7 @@ namespace Plot_thoses_lines__
                         scatter.LegendText = kvp.Key; // Nom de la série = entête CSV
                     }
 
-                    formsPlot1.Plot.Title("Mesures depuis CSV");
+                    formsPlot1.Plot.Title("Inserer un titre...");
                     formsPlot1.Plot.XLabel(headers[0]);
                     formsPlot1.Plot.YLabel("Valeurs");
                     formsPlot1.Plot.Legend.IsVisible = true;
@@ -125,7 +124,7 @@ namespace Plot_thoses_lines__
             }
         }
 
-        private void ChargerCSV_FileOk(object sender, CancelEventArgs e) //openFileDialog
+        private void ChargerCSV_FileOk(object sender, CancelEventArgs e) 
         {
 
         }
@@ -137,7 +136,9 @@ namespace Plot_thoses_lines__
 
         private void mtbCsvName_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
         {
-
+            string chartTitle = mtbCsvName.Text;
+            formsPlot1.Plot.Title(mtbCsvName.Text);     //////  FAIT CA POUR QUE CA FONCTIONNE LE RENAME DU formsPlot1.Plot.Title("Inserer un titre...");
+            formsPlot1.Refresh();
         }
     }
 }
