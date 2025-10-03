@@ -22,6 +22,8 @@ namespace Plot_thoses_lines__
         {
             InitializeComponent();
 
+
+
             // Charge le CSV s'il existe déjà
             if (File.Exists(csvFilePath))
                 LoadCsvAndPlot(csvFilePath);
@@ -82,9 +84,6 @@ namespace Plot_thoses_lines__
 
                     formsPlot1.Refresh();
 
-                    // Donne le nom du .csv au maskedTextBox
-                    mtbCsvName.Text = Path.GetFileName(path);
-
                 }
             }
             catch (Exception ex)
@@ -134,11 +133,13 @@ namespace Plot_thoses_lines__
 
         }
 
-        private void mtbCsvName_MaskInputRejected(object sender, MaskInputRejectedEventArgs e)
+        /* Du au fait que je suis sur Visual Studio 2022 Preview, je n'ai pas de textbox, qui rend la tâche "Lorsque les données sont tracées, en utilisant la zone de texte "Name of the chart", l’utilisateur peut saisir et modifier un titre et l’afficher sur le graphique.". Je le ferais chez moi ou j'ai visual studio code 2022.
+        private void mtbCsvName_MaskInputRejected(object sender, EventArgs e)
         {
             string chartTitle = mtbCsvName.Text;
             formsPlot1.Plot.Title(mtbCsvName.Text);     //////  FAIT CA POUR QUE CA FONCTIONNE LE RENAME DU formsPlot1.Plot.Title("Inserer un titre...");
             formsPlot1.Refresh();
         }
+        */
     }
 }
