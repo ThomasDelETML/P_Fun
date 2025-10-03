@@ -28,10 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.btnChargerCSV = new System.Windows.Forms.Button();
             this.ChargerCSV = new System.Windows.Forms.OpenFileDialog();
             this.formsPlot1 = new ScottPlot.WinForms.FormsPlot();
             this.ChangeTitle = new System.Windows.Forms.TextBox();
+            this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.LabelInfo = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnChargerCSV
@@ -66,11 +69,26 @@
             this.ChangeTitle.TabIndex = 3;
             this.ChangeTitle.TextChanged += new System.EventHandler(this.ChangeTitle_TextChanged);
             // 
+            // toolTip1
+            // 
+            this.toolTip1.Popup += new System.Windows.Forms.PopupEventHandler(this.toolTip1_Popup);
+            // 
+            // LabelInfo
+            // 
+            this.LabelInfo.AutoSize = true;
+            this.LabelInfo.Location = new System.Drawing.Point(13, 7);
+            this.LabelInfo.Name = "LabelInfo";
+            this.LabelInfo.Size = new System.Drawing.Size(51, 13);
+            this.LabelInfo.TabIndex = 4;
+            this.LabelInfo.Text = "LabelInfo";
+            this.LabelInfo.Click += new System.EventHandler(this.LabelInfo_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(992, 606);
+            this.Controls.Add(this.LabelInfo);
             this.Controls.Add(this.ChangeTitle);
             this.Controls.Add(this.formsPlot1);
             this.Controls.Add(this.btnChargerCSV);
@@ -87,6 +105,8 @@
         private System.Windows.Forms.OpenFileDialog ChargerCSV;
         private ScottPlot.WinForms.FormsPlot formsPlot1;
         private System.Windows.Forms.TextBox ChangeTitle;
+        private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.Label LabelInfo;
     }
 }
 

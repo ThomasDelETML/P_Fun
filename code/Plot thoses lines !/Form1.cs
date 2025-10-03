@@ -12,6 +12,8 @@ using System.Globalization;
 using System.IO;
 using CsvHelper;
 using ScottPlot;
+using ScottPlot.Plottables;
+
 
 namespace Plot_thoses_lines__
 {
@@ -22,7 +24,7 @@ namespace Plot_thoses_lines__
         {
             InitializeComponent();
 
-
+            formsPlot1.MouseMove += formsPlot1_MouseMove;
 
             // Charge le CSV s'il existe déjà
             if (File.Exists(csvFilePath))
@@ -133,11 +135,52 @@ namespace Plot_thoses_lines__
 
         }
 
+        private void formsPlot1_MouseMove(object sender, MouseEventArgs e) // Je comprend po
+        {
+            string tooltipText = "Aucun point proche";
+
+            var allSeries = formsPlot1.Plot.GetPlottables()
+                .Where(p => p.GetType().Name == "ScatterPlot")
+                .ToList();
+
+            foreach (dynamic series in allSeries)
+            {
+                for (int i = 0; i < series.Xs.Length; i++)
+                {
+                    if (double.IsNaN(series.Xs[i]) || double.IsNaN(series.Ys[i]))
+                        continue;
+
+                    var pointPixel = formsPlot1.Plot.GetPixel(new ScottPlot.Coordinates(series.Xs[i], series.Ys[i]));
+                    double dx = pointPixel.X - e.X;
+                    double dy = pointPixel.Y - e.Y;
+                    double distance = Math.Sqrt(dx * dx + dy * dy);
+
+                    if (distance < 100) 
+                    {
+                        tooltipText = $"{series.Label} | Year: {series.Xs[i]:F0} | Value: {series.Ys[i]:F2}";
+                        break;
+                    }
+                }
+            }
+
+            LabelInfo.Text = tooltipText;
+        }
+
         private void ChangeTitle_TextChanged(object sender, EventArgs e)
         {
                 string chartTitle = ChangeTitle.Text;
                 formsPlot1.Plot.Title(ChangeTitle.Text);
                 formsPlot1.Refresh();
+        }
+
+        private void toolTip1_Popup(object sender, PopupEventArgs e)
+        {
+
+        }
+
+        private void LabelInfo_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
