@@ -9,3 +9,8 @@
 - Git: Nommage impeccable, projet OK
 - Journal: Bien
 - Global: OK
+
+## 3.10
+
+- La story Affichage simultané fonctionne. Du moins, les deux tests présents dans la story.
+- ça ne marche pas si le fichier `data.csv` n'existe pas au préalable
