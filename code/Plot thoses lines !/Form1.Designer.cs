@@ -35,6 +35,7 @@
             this.ChangeTitle = new System.Windows.Forms.TextBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.LabelInfo = new System.Windows.Forms.Label();
+            this.comboBoxChartType = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // btnChargerCSV
@@ -83,11 +84,21 @@
             this.LabelInfo.Text = "LabelInfo";
             this.LabelInfo.Click += new System.EventHandler(this.LabelInfo_Click);
             // 
+            // comboBoxChartType
+            // 
+            this.comboBoxChartType.FormattingEnabled = true;
+            this.comboBoxChartType.Location = new System.Drawing.Point(24, 7);
+            this.comboBoxChartType.Name = "comboBoxChartType";
+            this.comboBoxChartType.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxChartType.TabIndex = 5;
+            this.comboBoxChartType.SelectedIndexChanged += new System.EventHandler(this.comboBoxChartType_SelectedIndexChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(992, 606);
+            this.Controls.Add(this.comboBoxChartType);
             this.Controls.Add(this.LabelInfo);
             this.Controls.Add(this.ChangeTitle);
             this.Controls.Add(this.formsPlot1);
@@ -107,6 +118,7 @@
         private System.Windows.Forms.TextBox ChangeTitle;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label LabelInfo;
+        private System.Windows.Forms.ComboBox comboBoxChartType;
     }
 }
 

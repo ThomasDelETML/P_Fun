@@ -30,6 +30,19 @@ namespace Plot_thoses_lines__
         }
         private List<SeriesData> allSeriesData = new List<SeriesData>();
 
+        //Mémorise le type de graphique actuellement sélctionné
+        private enum ChartType
+        {
+            Line,
+            Scatter,
+            Bar
+        }
+        private ChartType currentChartType = ChartType.Line;
+        private List<double> currentX;
+        private Dictionary<string, List<double>> currentData;
+        //a ici
+
+
         public Form1()
         {
             InitializeComponent();
@@ -54,60 +67,30 @@ namespace Plot_thoses_lines__
                     csv.ReadHeader();
                     var headers = csv.HeaderRecord;
 
-                    var xValues = new List<double>();
-                    var data = new Dictionary<string, List<double>>();
+                    currentX = new List<double>();
+                    currentData = new Dictionary<string, List<double>>();
 
-                    // Première colonne = X (ex: années ou temps), on saute
                     foreach (var header in headers.Skip(1))
-                        data[header] = new List<double>();
+                        currentData[header] = new List<double>();
 
                     while (csv.Read())
                     {
                         if (double.TryParse(csv.GetField(headers[0]), out double x))
-                            xValues.Add(x);
+                            currentX.Add(x);
                         else
-                            xValues.Add(double.NaN);
+                            currentX.Add(double.NaN);
 
-                        foreach (var key in data.Keys.ToList())
+                        foreach (var key in currentData.Keys.ToList())
                         {
                             if (double.TryParse(csv.GetField(key), out double val))
-                                data[key].Add(val);
+                                currentData[key].Add(val);
                             else
-                                data[key].Add(double.NaN);
+                                currentData[key].Add(double.NaN);
                         }
                     }
-
-                    double[] dataX = xValues.ToArray();
-
-                    // Nettoie l'ancien graphe
-                    formsPlot1.Plot.Clear();
-
-                    allSeriesData.Clear(); // reset séries
-    
-
-                    foreach (var kvp in data)
-                    {
-                        double[] dataY = kvp.Value.ToArray();
-                        var scatter = formsPlot1.Plot.Add.Scatter(dataX, dataY);
-                        scatter.LegendText = kvp.Key; // Nom de la série = entête CSV
-
-                        //Prit de la doc de ScottPlot pour le MouseMouve
-                        allSeriesData.Add(new SeriesData
-                        {
-                            Name = kvp.Key,
-                            XValues = dataX,
-                            YValues = dataY
-                        });
-                    }
-
-                    formsPlot1.Plot.Title("Inserer un titre...");
-                    formsPlot1.Plot.XLabel(headers[0]);
-                    formsPlot1.Plot.YLabel("Valeurs");
-                    formsPlot1.Plot.Legend.IsVisible = true;
-
-                    formsPlot1.Refresh();
-
                 }
+
+                RedrawChart();
             }
             catch (Exception ex)
             {
@@ -115,8 +98,12 @@ namespace Plot_thoses_lines__
             }
         }
 
+
         private void Form1_Load(object sender, EventArgs e)
         {
+            //Permet de choisir le type de graphique
+            comboBoxChartType.Items.AddRange(new string[] { "Line", "Scatter", "Bar" });
+            comboBoxChartType.SelectedIndex = 0;
 
         }
 
@@ -215,5 +202,72 @@ namespace Plot_thoses_lines__
         {
 
         }
+
+        //Redessine le graphique selon le choix de l'user
+        private void comboBoxChartType_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string selected = comboBoxChartType.SelectedItem.ToString();
+            if (selected == "Line") currentChartType = ChartType.Line;
+            else if (selected == "Scatter") currentChartType = ChartType.Scatter;
+            else if (selected == "Bar") currentChartType = ChartType.Bar;
+
+            RedrawChart();
+        }
+
+        //Redessine le graphique selon le type sélectionné en utilisant les données déjà chargées, sans relire le CSV.
+        //Met aussi à jour la légende et le survol des points.
+        private void RedrawChart()
+        {
+            formsPlot1.Plot.Clear();
+            allSeriesData.Clear();
+
+            double[] xVals = currentX.ToArray();
+
+            foreach (var kvp in currentData)
+            {
+                double[] yVals = kvp.Value.ToArray();
+
+                switch (currentChartType)
+                {
+                    case ChartType.Line:
+                        var line = formsPlot1.Plot.Add.Scatter(xVals, yVals);
+                        line.LegendText = kvp.Key;
+                        line.LineWidth = 2;
+                        break;
+
+                    case ChartType.Scatter:
+                        var scatter = formsPlot1.Plot.Add.Scatter(xVals, yVals);
+                        scatter.LegendText = kvp.Key;
+                        scatter.LineWidth = 0;
+                        scatter.MarkerSize = 5;
+                        break;
+
+                    case ChartType.Bar:
+                        List<ScottPlot.Bar> bars = new List<ScottPlot.Bar>();
+                        for (int i = 0; i < xVals.Length; i++)
+                        {
+                            bars.Add(new ScottPlot.Bar()
+                            {
+                                Position = xVals[i],
+                                Value = yVals[i],
+                                Label = kvp.Key
+                            });
+                        }
+                        formsPlot1.Plot.Add.Bars(bars);
+                        break;
+                }
+
+                allSeriesData.Add(new SeriesData
+                {
+                    Name = kvp.Key,
+                    XValues = xVals,
+                    YValues = yVals
+                });
+            }
+
+            formsPlot1.Plot.Legend.IsVisible = true;
+            formsPlot1.Refresh();
+        }
+
     }
 }
