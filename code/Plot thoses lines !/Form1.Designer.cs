@@ -76,7 +76,7 @@
             // LabelInfo
             // 
             this.LabelInfo.AutoSize = true;
-            this.LabelInfo.Location = new System.Drawing.Point(13, 7);
+            this.LabelInfo.Location = new System.Drawing.Point(83, 96);
             this.LabelInfo.Name = "LabelInfo";
             this.LabelInfo.Size = new System.Drawing.Size(51, 13);
             this.LabelInfo.TabIndex = 4;

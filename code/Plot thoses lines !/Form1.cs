@@ -1,18 +1,19 @@
-﻿using System;
+﻿using CsvHelper;
+using ScottPlot;
+using ScottPlot.Plottables;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
+using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using System.Globalization;
-using System.IO;
-using CsvHelper;
-using ScottPlot;
-using ScottPlot.Plottables;
 
 
 namespace Plot_thoses_lines__
@@ -20,6 +21,15 @@ namespace Plot_thoses_lines__
     public partial class Form1 : Form
     {
         private string csvFilePath = Path.Combine(Application.StartupPath, "data.csv");
+        //Prit de la doc ScottPlot
+        private class SeriesData
+        {
+            public string Name { get; set; }
+            public double[] XValues { get; set; }
+            public double[] YValues { get; set; }
+        }
+        private List<SeriesData> allSeriesData = new List<SeriesData>();
+
         public Form1()
         {
             InitializeComponent();
@@ -72,11 +82,22 @@ namespace Plot_thoses_lines__
                     // Nettoie l'ancien graphe
                     formsPlot1.Plot.Clear();
 
+                    allSeriesData.Clear(); // reset séries
+    
+
                     foreach (var kvp in data)
                     {
                         double[] dataY = kvp.Value.ToArray();
                         var scatter = formsPlot1.Plot.Add.Scatter(dataX, dataY);
                         scatter.LegendText = kvp.Key; // Nom de la série = entête CSV
+
+                        //Prit de la doc de ScottPlot pour le MouseMouve
+                        allSeriesData.Add(new SeriesData
+                        {
+                            Name = kvp.Key,
+                            XValues = dataX,
+                            YValues = dataY
+                        });
                     }
 
                     formsPlot1.Plot.Title("Inserer un titre...");
@@ -135,35 +156,47 @@ namespace Plot_thoses_lines__
 
         }
 
-        private void formsPlot1_MouseMove(object sender, MouseEventArgs e) // Je comprend po
+        //Prit de la doc officiel de ScottPlot : https://github.com/ScottPlot/ScottPlot/blob/main/src/ScottPlot5/ScottPlot5%20Demos/ScottPlot5%20WinForms%20Demo/Demos/ShowValueOnHover.cs
+        private void formsPlot1_MouseMove(object sender, MouseEventArgs e)
         {
-            string tooltipText = "Aucun point proche";
+            var mouseCoord = formsPlot1.Plot.GetCoordinates(e.X, e.Y);
+            double minDistance = double.MaxValue;
+            double matchedX = double.NaN;
+            double matchedY = double.NaN;
+            string matchedName = "";
 
-            var allSeries = formsPlot1.Plot.GetPlottables()
-                .Where(p => p.GetType().Name == "ScatterPlot")
-                .ToList();
-
-            foreach (dynamic series in allSeries)
+            foreach (var series in allSeriesData)
             {
-                for (int i = 0; i < series.Xs.Length; i++)
+                for (int i = 0; i < series.XValues.Length; i++)
                 {
-                    if (double.IsNaN(series.Xs[i]) || double.IsNaN(series.Ys[i]))
+                    if (double.IsNaN(series.XValues[i]) || double.IsNaN(series.YValues[i]))
                         continue;
 
-                    var pointPixel = formsPlot1.Plot.GetPixel(new ScottPlot.Coordinates(series.Xs[i], series.Ys[i]));
+                    var pointPixel = formsPlot1.Plot.GetPixel(new ScottPlot.Coordinates(series.XValues[i], series.YValues[i]));
                     double dx = pointPixel.X - e.X;
                     double dy = pointPixel.Y - e.Y;
                     double distance = Math.Sqrt(dx * dx + dy * dy);
 
-                    if (distance < 100) 
+                    if (distance < minDistance && distance < 50)
                     {
-                        tooltipText = $"{series.Label} | Year: {series.Xs[i]:F0} | Value: {series.Ys[i]:F2}";
-                        break;
+                        minDistance = distance;
+                        matchedX = series.XValues[i];
+                        matchedY = series.YValues[i];
+                        matchedName = series.Name;
                     }
                 }
             }
 
-            LabelInfo.Text = tooltipText;
+            if (double.IsNaN(matchedX) || double.IsNaN(matchedY))
+            {
+                LabelInfo.Text = "";
+                formsPlot1.Cursor = Cursors.Default;
+            }
+            else
+            {
+                LabelInfo.Text = $"{matchedName} | Year: {matchedX:F0} | Value: {matchedY:F2}";
+                formsPlot1.Cursor = Cursors.Hand;
+            }
         }
 
         private void ChangeTitle_TextChanged(object sender, EventArgs e)
