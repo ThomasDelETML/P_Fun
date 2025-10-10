@@ -1,11 +1,11 @@
 # Rapport Projet Plot Those Lines!
 
-**Élève :** Moreira Thomas
-**Client :** Xavier Carrel
+**Élève :** Moreira Thomas  
+**Client :** Xavier Carrel  
 **Lieu :** ETML, Avenue de Valmont 28b, 1010 Lausanne  
 **Dates :** 1er trimestre 2025  
 **Auteur(s) :** Moreira Thomas  
-**Version :** 1.0
+**Version :** 1.1
 
 ---
 
@@ -25,16 +25,18 @@
 ---
 
 ## Introduction
-- Concevoir un logiciel pour afficher des graphiques sur des données
-- Objectifs pédagogiques et professionnels  
-- Résumé des fonctionnalités principales souhaitées  :D
+Le projet **Plot Those Lines!** consiste à concevoir un logiciel permettant d’afficher des graphiques dynamiques à partir de fichiers CSV.  
+Ce projet s’inscrit dans le cadre pédagogique de l’ETML et a pour objectif de développer des compétences techniques en C#, en visualisation de données et en structuration logicielle.  
+Le produit final doit permettre à un utilisateur d’importer des données, de sélectionner un type de graphique (ligne, scatter ou barres), d’afficher les séries temporelles correspondantes et d’interagir avec les points affichés.
 
 ---
 
-## Description du domaine et sources de données
-- Domaine choisi population de canton de Vaud
-- Les données sont prix des sources du cantons de Vaud.
-- Données sur un .CSV
+## Description du domaine et sources de données (min 250mots)
+Le domaine étudié est la population du canton de Vaud et de la Romandie. Les données utilisées proviennent de sources officielles cantonales et fédérales. Elles sont fournies dans un format CSV, ce qui facilite leur importation et leur exploitation dans Visual Studio. La période couverte s’étend de 1803, année de l’indépendance vaudoise, jusqu’à 2024, offrant ainsi une vision démographique de plus de deux siècles. Les relevés sont effectués à intervalles réguliers d’environ dix ans : 1803, 1810, 1820, 1830 et ainsi de suite, jusqu’à l’époque contemporaine. Cette régularité garantit une cohérence temporelle utile pour toute analyse de tendance.
+
+Les données ont été structurées pour être directement compatibles avec mon logiciel de visualisation de statistique. Chaque enregistrement comprend au minimum l’année du recensement et la population totale recensée. Cela permet d’élaborer facilement des graphiques linéaires, des histogrammes ou des autres. L’objectif principal de ce projet est de rendre l’évolution démographique plus claire, visuelle et intuitive, afin que toute personne, même non spécialiste, puisse comprendre comment la population a évolué au fil du temps.
+
+Le choix de ce domaine repose sur plusieurs raisons solides : d’abord, la disponibilité de données publiques fiables issues d’institutions officielles. Ensuite, la présence d’évolutions temporelles nettes qui permettent d’identifier des périodes de croissance, de stagnation ou de déclin. Enfin, il s’agit d’un sujet personnellement motivant, car j’ai un intérêt particulier pour les statistiques et leur capacité à raconter une histoire à travers des chiffres.
 
 ---
 
@@ -51,6 +53,10 @@
 
 ### Objectifs qualitatifs
 - Code organisé, optimisé, commenté, testé  
+
+### Objectifs pédagogiques (min 250mots)
+
+### Objectifs produit (min 250mots)
 
 ---
 
@@ -94,6 +100,11 @@
 
 ---
 
+## Bilans
+### Bilan technique (min 250mots)
+
+### Bilan personnel (min 250mots)
+
 ## Journal de travail
 - Chronologie du projet avec activités réalisées  
 - Difficultés rencontrées et solutions  
@@ -102,7 +113,7 @@
 
 ---
 
-## Usage de l’IA
+## Usage de l’IA (min 250mots)
 - Indiquer si une IA a été utilisée  
 - Décrire le type d’assistance (ex: génération de scripts, tests, suggestions de code)  
 - Explication précise de la manière dont l’IA a été utilisée et encadrée  
