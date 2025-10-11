@@ -23,11 +23,14 @@
 
 ## 10.10 (80%)
 
-- Rythme (avancement du code):
+- Rythme (avancement du code): KO, lorsqu'on importe des données, elles doivent se combiner avec les données existantes, pas les remplacer
 - Qualité (normes, commentaires):
-- Connaissances professionnelles (LinQ):
-- Processus de travail (jdt, git, git project, release):
-- Expression (user stories, rapport):
-- Ecologie (.gitignore):
-- Attitude groupe:
-- Attitude personnelle:
+  - il reste des fautes d'indentation
+  - il ne doit pas y avoir de méthodes vides dans le code livré
+  - il y a des choses très bien dans votre code. Soit vous avez beaucoup progressé, soit vous n'êtes pas vraiment l'auteur de ce code. Il faudra que l'on discute.
+- Connaissances professionnelles (LinQ): KO, il reste plusieurs `foreach` qui devrait être du LinQ
+- Processus de travail (jdt, git, git project, release): OK
+- Expression (user stories, rapport): US OK, le rapport a encore besoin de travail. En particulier dans sa formulation. La description du domaine a un très fort parfum d'IA. Je ne pense pas vous avoir jamais entendu utiliser des phrases comme "le choix de ce domaine repose sur plusieurs raisons solides", par exemple.
+- Ecologie (.gitignore): OK
+- Attitude groupe: OK
+- Attitude personnelle: OK
