@@ -20,3 +20,14 @@
 - Journal: nickel
 - Ne restez pas bloqué indéfiniment sur un point dont la valeur n'est pas énorme. Il vaut mieux bien manipuler vos données par exemple.
 - Vous avez une bonne base de rapport, à vous de l'alimenter avec du contenu personnel
+
+## 10.10 (80%)
+
+- Rythme (avancement du code):
+- Qualité (normes, commentaires):
+- Connaissances professionnelles (LinQ):
+- Processus de travail (jdt, git, git project, release):
+- Expression (user stories, rapport):
+- Ecologie (.gitignore):
+- Attitude groupe:
+- Attitude personnelle:
