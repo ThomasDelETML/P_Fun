@@ -55,6 +55,13 @@ Le choix de ce domaine repose sur plusieurs raisons solides : d’abord, la disp
 - Code organisé, optimisé, commenté, testé  
 
 ### Objectifs pédagogiques (min 250mots)
+L’objectif pédagogique principal de ce projet est d’approfondir mes compétences en programmation  C#, tout en appliquant des concepts avancés tels que LINQ et la programmation fonctionnel. Le projet Plot Those Lines! ma permit de passer de la simple écriture de code à la conception d’une application complète, structurée et maintenable. L’enjeu n’est donc pas uniquement de produire un programme fonctionnel, mais aussi de comprendre les principes de conception logicielle nécessaires à un développement professionnel.
+
+Un autre objectif est d’apprendre à analyser un besoin client, à le traduire en fonctionnalités concrètes et à le planifier sous forme de User Stories. Ce travail m’enseigne la rigueur nécessaire à la communication entre le développeur et le client (bien que ce client était moi-même), ainsi que l’importance d’une documentation claire et structurée. La gestion des priorités et la planification dans le temps, participent également à la compréhension du cycle de vie complet d’un projet logiciel.
+
+Sur le plan technique, le projet me pousse à découvrir et maîtriser des bibliothèques spécialisées dans la visualisation de données et à comprendre comment manipuler efficacement des fichiers CSV, gérer les exceptions et assurer la robustesse du code. L’utilisation de tests unitaires fait aussi partie de la formation afin de garantir la fiabilité des fonctions développées.
+
+Enfin, le projet a une visée réflexive : il s’agit d’apprendre à évaluer son propre travail, à identifier les points à améliorer et à tirer des leçons des erreurs rencontrées. En résumé, ce projet me permet de combiner compétences techniques, méthodologie de projet et autonomie, trois éléments essentiels pour évoluer vers une pratique professionnelle du développement logiciel.
 
 ### Objectifs produit (min 250mots)
 
