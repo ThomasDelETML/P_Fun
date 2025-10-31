@@ -64,6 +64,13 @@ Sur le plan technique, le projet me pousse à découvrir et maîtriser des bibli
 Enfin, le projet a une visée réflexive : il s’agit d’apprendre à évaluer son propre travail, à identifier les points à améliorer et à tirer des leçons des erreurs rencontrées. En résumé, ce projet me permet de combiner compétences techniques, méthodologie de projet et autonomie, trois éléments essentiels pour évoluer vers une pratique professionnelle du développement logiciel.
 
 ### Objectifs produit (min 250mots)
+L’objectif produit du projet **Plot Those Lines!** est de concevoir un logiciel capable de transformer des fichiers de données brutes au format CSV en graphiques clairs, dynamiques et personnalisables. Le produit final doit offrir une interface intuitive permettant à tout utilisateur, qu’il soit novice ou expérimenté, d’importer ses propres jeux de données et de les visualiser sous forme de courbes ou de diagrammes à barres. L’idée centrale est de rendre la lecture et l’interprétation de données numériques plus visuelles et accessibles, tout en conservant une approche rigoureuse et précise.
+
+Le logiciel doit permettre d’ajuster le type de graphique souhaité et d’afficher plusieurs séries sur un même plan pour faciliter les comparaisons. Il inclut également la possibilité d’interagir avec les graphiques, par exemple en affichant les valeurs exactes au survol. Une attention particulière est portée à la lisibilité : axes clairs, légendes et couleurs distinctes.
+
+Sur le plan technique, l’objectif est de garantir un fonctionnement fluide et stable, même avec des fichiers volumineux. L’application doit gérer les erreurs d’importation (valeurs manquantes, séparateurs incohérents) et offrir des messages d’erreur explicites. Le code est conçu pour être extensible, afin de pouvoir ajouter facilement de nouveaux types de visualisations ou formats de données à l’avenir.
+
+En somme, **Plot Those Lines!** vise à fournir un outil polyvalent et robuste, combinant efficacité technique, simplicité d’utilisation et pertinence visuelle. Ce produit répond à un besoin réel : permettre une compréhension rapide et graphique de données statistiques sans nécessiter de compétences en programmation ou en traitement de données.
 
 ---
 
