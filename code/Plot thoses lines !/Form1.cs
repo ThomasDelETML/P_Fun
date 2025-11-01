@@ -1,4 +1,14 @@
-﻿using CsvHelper;
+﻿/**********************************************************************************************
+ *  Développeur: Moreira Thomas
+ *
+ *  Projet: Concevoir un logiciel pour afficher des graphiques sur des données
+ *
+ *  Fichier: Form1.cs
+ *  Auteur: Moreira Thomas
+ *  Date: 2025.11.01
+ **********************************************************************************************/
+
+using CsvHelper;
 using ScottPlot;
 using ScottPlot.Plottables;
 using System;
@@ -18,8 +28,10 @@ namespace Plot_thoses_lines__
 {
     public partial class Form1 : Form
     {
+        // chemin par defaut du CSV
         private string csvFilePath = Path.Combine(Application.StartupPath, "data.csv");
 
+        // structure pour garder un snapshot de donnees tracees
         private class SeriesData
         {
             public string Name { get; set; }
@@ -27,8 +39,10 @@ namespace Plot_thoses_lines__
             public double[] YValues { get; set; }
         }
 
+        // stockage des series en cours pour le survol souris
         private List<SeriesData> allSeriesData = new List<SeriesData>();
 
+        // types de chart disponibles
         private enum ChartType
         {
             Line,
@@ -36,9 +50,10 @@ namespace Plot_thoses_lines__
             Bar
         }
 
+        // type de chart courant
         private ChartType currentChartType = ChartType.Line;
 
-        // Modèle courant: X aligné commun + séries
+        // modele courant: X commun et dictionnaire des series
         private List<double> currentX;
         private Dictionary<string, List<double>> currentData;
 
@@ -46,14 +61,17 @@ namespace Plot_thoses_lines__
         {
             InitializeComponent();
 
+            // abonne le handler de survol souris
             formsPlot1.MouseMove += formsPlot1_MouseMove;
 
+            // charge auto data.csv si present
             if (File.Exists(csvFilePath))
                 LoadCsvAndPlot(csvFilePath);
             else
                 MessageBox.Show("Le fichier data.csv n'existe pas.");
         }
 
+        // compare deux fichiers octet par octet
         private bool FileCompare(string file1, string file2)
         {
             if (string.Equals(file1, file2, StringComparison.OrdinalIgnoreCase)) return true;
@@ -72,6 +90,11 @@ namespace Plot_thoses_lines__
             }
         }
 
+        // lecture stricte du CSV
+        // - verifie entetes
+        // - verifie types
+        // - refuse NaN et Inf
+        // - aligne toutes les colonnes Y sur X
         private bool TryReadCsvStrict(
             string path,
             out List<double> x,
@@ -79,38 +102,41 @@ namespace Plot_thoses_lines__
             out string[] headers,
             out string errorMessage)
         {
-            x = new List<double>();
-            data = new Dictionary<string, List<double>>();
-            headers = new string[0];
-            errorMessage = string.Empty;
+            x = new List<double>();                     // collecte X
+            data = new Dictionary<string, List<double>>(); // collecte Y par serie
+            headers = Array.Empty<string>();            // entetes
+            errorMessage = string.Empty;                // message erreur
 
             try
             {
                 using (var reader = new StreamReader(path))
                 using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
+                    // lit entetes
                     if (!csv.Read() || !csv.ReadHeader())
                     {
-                        errorMessage = "En-têtes manquants ou fichier vide.";
+                        errorMessage = "En-tetes manquants ou fichier vide.";
                         return false;
                     }
 
-                    headers = csv.HeaderRecord ?? new string[0];
+                    headers = csv.HeaderRecord ?? Array.Empty<string>();
                     if (headers.Length < 2)
                     {
-                        errorMessage = "Le CSV doit contenir au minimum 2 colonnes (Year puis au moins une série).";
+                        errorMessage = "Le CSV doit contenir au minimum 2 colonnes (Year puis au moins une serie).";
                         return false;
                     }
 
-                    // Colonnes Y
-                    for (int i = 1; i < headers.Length; i++)
-                        data[headers[i]] = new List<double>();
+                    // cree les listes Y pour chaque colonne apres la premiere
+                    data = headers
+                        .Skip(1)
+                        .ToDictionary(h => h, _ => new List<double>());
 
-                    int row = 1; // après en-têtes
+                    int row = 1; // compteur de lignes apres entetes
                     while (csv.Read())
                     {
                         row++;
 
+                        // lit X
                         var rawX = csv.GetField(headers[0]);
                         if (string.IsNullOrWhiteSpace(rawX))
                         {
@@ -118,8 +144,7 @@ namespace Plot_thoses_lines__
                             return false;
                         }
 
-                        double xVal;
-                        if (!double.TryParse(rawX, NumberStyles.Float, CultureInfo.InvariantCulture, out xVal))
+                        if (!double.TryParse(rawX, NumberStyles.Float, CultureInfo.InvariantCulture, out double xVal))
                         {
                             errorMessage = "Mauvais type en colonne '" + headers[0] + "' ligne " + row + " ('" + rawX + "').";
                             return false;
@@ -131,9 +156,10 @@ namespace Plot_thoses_lines__
                             return false;
                         }
 
-                        x.Add(xVal);
+                        x.Add(xVal); // ajoute X
 
-                        var keys = new List<string>(data.Keys);
+                        // lit chaque Y pour la ligne courante
+                        var keys = new List<string>(data.Keys); // copie defensive
                         foreach (var key in keys)
                         {
                             var raw = csv.GetField(key);
@@ -143,8 +169,7 @@ namespace Plot_thoses_lines__
                                 return false;
                             }
 
-                            double y;
-                            if (!double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out y))
+                            if (!double.TryParse(raw, NumberStyles.Float, CultureInfo.InvariantCulture, out double y))
                             {
                                 errorMessage = "Mauvais type en colonne '" + key + "' ligne " + row + " ('" + raw + "').";
                                 return false;
@@ -156,18 +181,20 @@ namespace Plot_thoses_lines__
                                 return false;
                             }
 
-                            data[key].Add(y);
+                            data[key].Add(y); // ajoute Y a la serie
                         }
                     }
 
-                    // Taille cohérente
-                    foreach (var kv in data)
+                    // controle tailles: chaque serie doit avoir la meme longueur que X
+                    // important: pas de capture de parametre out dans lambda, on clone la valeur
+                    int xCount = x.Count;
+
+                    if (data.Any(kv => kv.Value.Count != xCount))
                     {
-                        if (kv.Value.Count != x.Count)
-                        {
-                            errorMessage = "Longueur incohérente pour la série '" + kv.Key + "'.";
-                            return false;
-                        }
+                        // trouve la premiere serie invalide
+                        var bad = data.First(kv => kv.Value.Count != xCount).Key;
+                        errorMessage = "Longueur incoherente pour la serie '" + bad + "'.";
+                        return false;
                     }
 
                     return true;
@@ -180,6 +207,8 @@ namespace Plot_thoses_lines__
             }
         }
 
+        // compare dataset courant et dataset propose
+        // verifie entetes, X, et valeurs serie par serie
         private bool DatasetEquals(
             string[] newHeaders,
             List<double> newX,
@@ -187,14 +216,9 @@ namespace Plot_thoses_lines__
         {
             if (currentX == null || currentData == null) return false;
 
-            var currentHeaders = new List<string>();
-            currentHeaders.Add("X");
-            currentHeaders.AddRange(currentData.Keys);
-
-            var normalizedNew = new List<string>();
-            normalizedNew.Add("X");
-            for (int i = 1; i < newHeaders.Length; i++)
-                normalizedNew.Add(newHeaders[i]);
+            // normalise entetes
+            var currentHeaders = new[] { "X" }.Concat(currentData.Keys);
+            var normalizedNew = new[] { "X" }.Concat(newHeaders.Skip(1));
 
             if (!currentHeaders.SequenceEqual(normalizedNew))
                 return false;
@@ -202,18 +226,16 @@ namespace Plot_thoses_lines__
             if (!currentX.SequenceEqual(newX))
                 return false;
 
-            foreach (var key in currentData.Keys)
-            {
-                List<double> ys;
-                if (!newData.TryGetValue(key, out ys)) return false;
-                if (!currentData[key].SequenceEqual(ys)) return false;
-            }
-            return true;
+            // toutes les series doivent etre identiques
+            return currentData.All(kv =>
+                newData.TryGetValue(kv.Key, out var ys) && kv.Value.SequenceEqual(ys));
         }
 
-        // Fusion union triée, écrase en cas de recouvrement
+        // fusionne un nouveau dataset dans le modele courant
+        // union triée de X, ecrase les recouvrements par les nouvelles valeurs
         private void MergeIntoCurrentData(List<double> newX, Dictionary<string, List<double>> newData)
         {
+            // cas initial: aucun dataset courant
             if (currentX == null || currentData == null || currentData.Count == 0)
             {
                 currentX = new List<double>(newX);
@@ -221,54 +243,60 @@ namespace Plot_thoses_lines__
                 return;
             }
 
-            // Union triée des X
-            var unionX = currentX.Union(newX).Distinct().OrderBy(v => v).ToList();
-            var idx = new Dictionary<double, int>();
-            for (int i = 0; i < unionX.Count; i++) idx[unionX[i]] = i;
+            // union triee des X
+            var unionX = currentX.Concat(newX).Distinct().OrderBy(v => v).ToList();
 
-            // Préparer nouvelles matrices alignées
-            var allSeries = new HashSet<string>(currentData.Keys, StringComparer.OrdinalIgnoreCase);
-            foreach (var k in newData.Keys) allSeries.Add(k);
+            // index de position pour chaque X
+            // v = valeur, i = index
+            var idx = unionX.Select((v, i) => (v, i)).ToDictionary(t => t.v, t => t.i);
 
-            var merged = new Dictionary<string, double[]>(StringComparer.OrdinalIgnoreCase);
-            foreach (var s in allSeries)
-                merged[s] = Enumerable.Repeat(double.NaN, unionX.Count).ToArray();
+            // ensemble des noms de series
+            var allSeries = currentData.Keys
+                .Concat(newData.Keys)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
 
-            // Injecter ancien
-            foreach (var kv in currentData)
+            // prepare des buffers NaN pour toutes les series
+            var merged = allSeries.ToDictionary(
+                s => s,
+                _ => Enumerable.Repeat(double.NaN, unionX.Count).ToArray(),
+                StringComparer.OrdinalIgnoreCase);
+
+            // injecte ancien dataset
+            // on parcourt par index pour recoller X[i] a Y[i]
+            // limite superieure securisee pour eviter IndexOutOfRange si donnees mal formees
+            for (int i = 0; i < Math.Min(currentX.Count, currentData.Values.FirstOrDefault()?.Count ?? 0); i++)
             {
-                var name = kv.Key;
-                var y = kv.Value;
-                for (int i = 0; i < Math.Min(currentX.Count, y.Count); i++)
+                var xval = currentX[i];
+                if (!idx.TryGetValue(xval, out int j)) continue; // X inconnu
+
+                foreach (var kv in currentData)
                 {
-                    var xval = currentX[i];
-                    int j;
-                    if (idx.TryGetValue(xval, out j))
-                        merged[name][j] = y[i];
+                    if (i < kv.Value.Count) merged[kv.Key][j] = kv.Value[i];
                 }
             }
 
-            // Injecter nouveau (overwrite)
-            foreach (var kv in newData)
+            // injecte nouveau dataset en ecrasant les recouvrements
+            for (int i = 0; i < Math.Min(newX.Count, newData.Values.FirstOrDefault()?.Count ?? 0); i++)
             {
-                var name = kv.Key;
-                var y = kv.Value;
-                for (int i = 0; i < Math.Min(newX.Count, y.Count); i++)
+                var xval = newX[i];
+                if (!idx.TryGetValue(xval, out int j)) continue;
+
+                foreach (var kv in newData)
                 {
-                    var xval = newX[i];
-                    int j;
-                    if (idx.TryGetValue(xval, out j))
-                        merged[name][j] = y[i];
+                    if (i < kv.Value.Count) merged[kv.Key][j] = kv.Value[i];
                 }
             }
 
-            // Remonter currentX/currentData
+            // reconstruit l etat courant
             currentX = unionX;
-            currentData = new Dictionary<string, List<double>>(StringComparer.OrdinalIgnoreCase);
-            foreach (var kv in merged)
-                currentData[kv.Key] = kv.Value.ToList();
+            currentData = merged.ToDictionary(
+                kv => kv.Key,
+                kv => kv.Value.ToList(),
+                StringComparer.OrdinalIgnoreCase);
         }
 
+        // charge un CSV et redraw
         private void LoadCsvAndPlot(string path)
         {
             try
@@ -284,7 +312,7 @@ namespace Plot_thoses_lines__
                     return;
                 }
 
-                // Remplace au démarrage
+                // remplace le dataset courant
                 currentX = x;
                 currentData = data;
                 RedrawChart();
@@ -296,12 +324,14 @@ namespace Plot_thoses_lines__
             }
         }
 
+        // init du combobox de type de chart
         private void Form1_Load(object sender, EventArgs e)
         {
             comboBoxChartType.Items.AddRange(new string[] { "Line", "Scatter", "Bar" });
             comboBoxChartType.SelectedIndex = 0;
         }
 
+        // handler bouton charger CSV
         private void btnChargerCSV_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
@@ -315,95 +345,91 @@ namespace Plot_thoses_lines__
                 {
                     string selectedFile = openFileDialog.FileName;
 
-                    // Doublon exact de fichier
+                    // refuse le meme fichier
                     if (File.Exists(csvFilePath) && FileCompare(selectedFile, csvFilePath))
                     {
-                        MessageBox.Show("Le fichier sélectionné est identique au fichier déjà importé.",
+                        MessageBox.Show("Le fichier selectionne est identique au fichier deja importe.",
                                         "Import CSV", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
 
-                    // Lire nouveau dataset
-                    List<double> newX;
-                    Dictionary<string, List<double>> newData;
-                    string[] newHeaders;
-                    string error;
-
-                    if (!TryReadCsvStrict(selectedFile, out newX, out newData, out newHeaders, out error))
+                    // lit le nouveau dataset
+                    if (!TryReadCsvStrict(selectedFile, out var newX, out var newData, out var newHeaders, out var error))
                     {
                         MessageBox.Show(error, "Import CSV", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
-                    // Aucun changement logique
+                    // annule si rien ne change logiquement
                     if (currentX != null && currentData != null && DatasetEquals(newHeaders, newX, newData))
                     {
-                        MessageBox.Show("Aucun changement détecté dans les en-têtes et les données. Import annulé.",
+                        MessageBox.Show("Aucun changement detecte dans les entetes et les donnees. Import annule.",
                                         "Import CSV", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         return;
                     }
 
-                    // Fusionner avec le modèle courant (écrase recouvrements)
+                    // fusionne dans le modele courant
                     MergeIntoCurrentData(newX, newData);
 
-                    // Copier comme base persistée
+                    // persiste le nouveau fichier comme base
                     File.Copy(selectedFile, csvFilePath, true);
 
+                    // redraw
                     RedrawChart();
 
-                    MessageBox.Show("Données importées avec succès.", "Import CSV",
+                    MessageBox.Show("Donnees importees avec succes.", "Import CSV",
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
         }
 
+        // survol souris: cherche le point le plus proche
         private void formsPlot1_MouseMove(object sender, MouseEventArgs e)
         {
-            double minDistance = double.MaxValue;
-            double matchedX = double.NaN;
-            double matchedY = double.NaN;
-            string matchedName = "";
-
-            foreach (var series in allSeriesData)
-            {
-                for (int i = 0; i < series.XValues.Length; i++)
-                {
-                    if (double.IsNaN(series.XValues[i]) || double.IsNaN(series.YValues[i]))
-                        continue;
-
-                    var pointPixel = formsPlot1.Plot.GetPixel(new ScottPlot.Coordinates(series.XValues[i], series.YValues[i]));
-                    double dx = pointPixel.X - e.X;
-                    double dy = pointPixel.Y - e.Y;
-                    double distance = Math.Sqrt(dx * dx + dy * dy);
-
-                    if (distance < minDistance && distance < 50)
+            // genere toutes les combinaisons (serie, index)
+            // calcule la distance pixel souris -> point
+            var nearest = allSeriesData
+                .SelectMany(s => Enumerable.Range(0, s.XValues.Length)
+                    .Select(i => new
                     {
-                        minDistance = distance;
-                        matchedX = series.XValues[i];
-                        matchedY = series.YValues[i];
-                        matchedName = series.Name;
-                    }
-                }
-            }
+                        s.Name,
+                        X = s.XValues[i],
+                        Y = s.YValues[i],
+                        Pixel = formsPlot1.Plot.GetPixel(new ScottPlot.Coordinates(s.XValues[i], s.YValues[i]))
+                    }))
+                .Where(p => !double.IsNaN(p.X) && !double.IsNaN(p.Y))
+                .Select(p => new
+                {
+                    p.Name,
+                    p.X,
+                    p.Y,
+                    Dist = Math.Sqrt(Math.Pow(p.Pixel.X - e.X, 2) + Math.Pow(p.Pixel.Y - e.Y, 2))
+                })
+                .OrderBy(p => p.Dist)
+                .FirstOrDefault();
 
-            if (double.IsNaN(matchedX) || double.IsNaN(matchedY))
+            // aucun point proche
+            if (nearest == null || nearest.Dist >= 50)
             {
                 LabelInfo.Text = "";
                 formsPlot1.Cursor = Cursors.Default;
             }
             else
             {
-                LabelInfo.Text = string.Format("{0} | Year: {1:F0} | Value: {2:F2}", matchedName, matchedX, matchedY);
+                // point proche: maj label et curseur
+                LabelInfo.Text = string.Format("{0} | Year: {1:F0} | Value: {2:F2}", nearest.Name, nearest.X, nearest.Y);
                 formsPlot1.Cursor = Cursors.Hand;
             }
         }
 
+        // change le titre du graphique
         private void ChangeTitle_TextChanged(object sender, EventArgs e)
         {
             formsPlot1.Plot.Title(ChangeTitle.Text);
             formsPlot1.Refresh();
         }
 
+        // change le type de graphique
         private void comboBoxChartType_SelectedIndexChanged(object sender, EventArgs e)
         {
             string selected = comboBoxChartType.SelectedItem.ToString();
@@ -414,10 +440,11 @@ namespace Plot_thoses_lines__
             RedrawChart();
         }
 
+        // reconstruit le graphique a partir de currentX et currentData
         private void RedrawChart()
         {
-            formsPlot1.Plot.Clear();
-            allSeriesData.Clear();
+            formsPlot1.Plot.Clear();     // vide le plot
+            allSeriesData.Clear();       // vide le cache de survol
 
             if (currentX == null || currentData == null || currentData.Count == 0)
             {
@@ -425,8 +452,10 @@ namespace Plot_thoses_lines__
                 return;
             }
 
+            // convertit X en tableau pour ScottPlot
             double[] xVals = currentX.ToArray();
 
+            // trace chaque serie
             foreach (var kvp in currentData)
             {
                 double[] yVals = kvp.Value.ToArray();
@@ -434,20 +463,23 @@ namespace Plot_thoses_lines__
                 switch (currentChartType)
                 {
                     case ChartType.Line:
+                        // trace en ligne
                         var line = formsPlot1.Plot.Add.Scatter(xVals, yVals);
-                        line.LegendText = kvp.Key;
+                        line.LegendText = kvp.Key; // nom de serie
                         line.LineWidth = 2;
                         line.MarkerSize = 0;
                         break;
 
                     case ChartType.Scatter:
+                        // trace en nuage de points
                         var scatter = formsPlot1.Plot.Add.Scatter(xVals, yVals);
                         scatter.LegendText = kvp.Key;
-                        scatter.LineWidth = 0;
+                        scatter.LineWidth = 0; // pas de ligne
                         scatter.MarkerSize = 5;
                         break;
 
                     case ChartType.Bar:
+                        // construit les barres une par une
                         var bars = new List<ScottPlot.Bar>();
                         for (int i = 0; i < xVals.Length; i++)
                         {
@@ -462,6 +494,7 @@ namespace Plot_thoses_lines__
                         break;
                 }
 
+                // met a jour le cache pour le survol
                 allSeriesData.Add(new SeriesData
                 {
                     Name = kvp.Key,
@@ -470,11 +503,14 @@ namespace Plot_thoses_lines__
                 });
             }
 
+            // affiche la legende
             formsPlot1.Plot.Legend.IsVisible = true;
+
+            // rafraichit
             formsPlot1.Refresh();
         }
 
-        // Handlers vides si présents dans le designer
+        // handlers vides pour le designer
         private void chart1_Click(object sender, EventArgs e) { }
         private void ChargerCSV_FileOk(object sender, CancelEventArgs e) { }
         private void formsPlot1_Load(object sender, EventArgs e) { }
