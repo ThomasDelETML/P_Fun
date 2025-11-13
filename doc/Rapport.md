@@ -13,7 +13,7 @@
 1. [Introduction](#introduction)  
 2. [Description du domaine et sources de données](#description-du-domaine-et-sources-de-données)  
 3. [Objectifs du projet](#objectifs-du-projet)  
-4. [Analyse des besoins (User Stories)](#analyse-des-besoins-user-stories)  
+4. [Analyse fonctionnel](#analyse-fonctionnel)  
 5. [Planification](#planification)  
 6. [Schéma et architecture](#schéma-et-architecture)  
 7. [Tests et validation](#tests-et-validation)
@@ -73,26 +73,51 @@ En somme, **Plot Those Lines!** vise à fournir un outil polyvalent et robuste, 
 
 ---
 
-## Analyse des besoins (User Stories)
+## Analyse fonctionnel
 
-**Exemple de User Stories :**
+**User stories :**
 
-| ID   | User Story                                      | Critères d’acceptation                                | Priorité |
+| Nom   | User Story                                      | Critères d’acceptation                                | Lien |
 |------|-----------------------------------------------|-------------------------------------------------------|----------|
-| US01 | En tant qu’utilisateur, je veux afficher une représentation graphique de plusieurs séries temporelles simultanément. | Lorsque des données sont insérées dans le programme avec "Import Chart", une ligne est tracée pour chaque entrée de données, représentant correctement les données.   | Haute    |
-| US02 | En tant qu’utilisateur, je souhaite afficher plusieurs intervalles de temps pour les mêmes données. | Lorsqu’un jeu de données est tracé et qu’il contient plusieurs séries temporelles pour une seule entrée, le programme affiche les deux entrées consécutives comme une seule ligne.       | Haute    |
-| …    | …                                             | …                                                     | …        |
+| Design de l'app | En tant que developpeur, je souhaite pouvoir avoir une mockup de l'app avant de la réaliser. | [x] La mockup est réaliser et compréhensible | [Lien](https://github.com/users/ThomasDelETML/projects/4/views/1?pane=issue&itemId=127572113&issue=ThomasDelETML%7CP_Fun%7C6) |
+|  |  | [x] Il y le lien pour la mockup a P_Fun/doc/Figma |  |
+| Création de la base de code | En tant que developpeur, je veux crée la base du code, n'ayant pas encore tout le savoir necessaire a crée tout pour l'app. | [x] Le fichier est crée | [Lien](https://github.com/users/ThomasDelETML/projects/4/views/1?pane=issue&itemId=127575059&issue=ThomasDelETML%7CP_Fun%7C7) |
+|  |  | [x] La base graphique & de code est réaliser |  |
+| Affichage simultané de plusieurs séries temporelles | En tant qu’utilisateur, je veux afficher une représentation graphique de plusieurs séries temporelles simultanément. | [x] Lorsque des données sont insérées dans le programme avec "Import Chart", une ligne est tracée pour chaque entrée de données, représentant correctement les données. | [Lien](https://github.com/users/ThomasDelETML/projects/4/views/1?pane=issue&itemId=127575059&issue=ThomasDelETML%7CP_Fun%7C7) |
+|  |  | [x] Lorsque les données sont tracées, la période temporelle de toutes les données est la même. |  |
 
-- Maquettes utilisées pour les User Stories
 <img width="1121" height="799" alt="image" src="https://github.com/user-attachments/assets/f6b49f5f-0d6b-41fe-9a1e-94fd8556a436" />
+
 On cherche a montrer les parametres d'affichage. On montre que le graphique doit avoire un axe x et y, et que il y a une legende avec la couleur et le nom d'une donné.
 
+| Nom   | User Story                                      | Critères d’acceptation                                | Lien |
+|------|-----------------------------------------------|-------------------------------------------------------|----------|
+| Options flexibles d’affichage et d’analyse | En tant qu’utilisateur, je veux bénéficier d’une grande flexibilité d’affichage afin de pouvoir analyser mes données en détail. | [x] Pendant que l’application est en cours d’exécution, lorsque je zoom, l’application effectue un zoom selon la position du curseur. | [Lien](https://github.com/users/ThomasDelETML/projects/4/views/1?pane=issue&itemId=126542641&issue=ThomasDelETML%7CP_Fun%7C2) |
+|  |  | [x] Pendant que l’application est en cours d’exécution et que les données sont correctement importées, une échelle est affichée sur les axes X et Y afin d’obtenir une meilleure perspective des données. |  |
+|  |  | [x] Pendant que l’application est en cours d’exécution et que les données sont correctement importées, un texte représentant chaque entrée de données est affiché dans la couleur dans laquelle elle est tracée sur le graphique. |  |
+|  |  | [x] Lorsque je survole un point précis des données, je vois la valeur exacte de l’entrée pour la date correspondante. |  |
+|  |  | [x] Lorsque les données sont tracées, en cliquant sur le menu déroulant "Choose the chart type", les données sont formatées selon le type de graphique choisi (graphique en ligne, histogramme, etc.). |  |
+|  |  | [x] Lorsque les données sont tracées, en utilisant la zone de texte "Name of the chart", l’utilisateur peut saisir et modifier un titre et l’afficher sur le graphique. |  |
+
+
 <img width="1127" height="800" alt="image" src="https://github.com/user-attachments/assets/2dbbd2ae-4c0c-4e25-a398-91d99f80732c" />
+
 On cherche a montrer que il y a un affichage de la date et de la valeur d'une donné si la souris et mis sur une donne.
 
+| Nom   | User Story                                      | Critères d’acceptation                                | Lien |
+|------|-----------------------------------------------|-------------------------------------------------------|----------|
+| Importation permanente de séries temporelles | En tant qu’utilisateur, je veux importer des séries de données de manière permanente. Le programme me permet d’importer un ou plusieurs formats de données. | [x] Lors de la première ouverture du programme, aucun graphique n’est affiché. | [Lien](https://github.com/users/ThomasDelETML/projects/4/views/1?pane=issue&itemId=126542752&issue=ThomasDelETML%7CP_Fun%7C3) |
+|  |  | [x] Lors des ouvertures suivantes, le graphique affiché précédemment est de nouveau affiché. |  |
+|  |  | [x] Pendant que l’application est en cours d’exécution, lorsque j’importe un fichier CSV avec "Import Chart", les données sont correctement importées et fonctionnent. Si les données contiennent une erreur (mauvais type de valeur, valeur impossible, valeur vide) ou aucun changement (dans les en-têtes et les données), le programme n’importe pas les données et informe l’utilisateur du problème rencontré. |  |
+|  |  | [x] Pendant que l’application est en cours d’exécution, si j’essaie d’importer des données qui existent déjà, le programme n’importe pas ces données et informe l’utilisateur que les données existent déjà. |  |
+
 <img width="1130" height="799" alt="image" src="https://github.com/user-attachments/assets/190c0218-1d06-451e-994b-5d9c615bfd6e" />
+
 On cherche a montrer qu'il y a un bouton pour importer et comment les donnés sont stockés de manières permanentes. Si les donnes sont validés par le programme, le fichier est copié dans le repertoire du programme et ensuite chargé pour etre affiché.
 
+| Nom   | User Story                                      | Critères d’acceptation                                | Lien |
+|------|-----------------------------------------------|-------------------------------------------------------|----------|
+| Affichage de données sur plusieurs intervalles de temps consécutifs | En tant qu’utilisateur, je souhaite afficher plusieurs intervalles de temps pour les mêmes données. | [x] Lorsqu’un jeu de données est tracé et qu’il contient plusieurs séries temporelles pour une seule entrée, le programme affiche les deux entrées consécutives comme une seule ligne. | [Lien](https://github.com/users/ThomasDelETML/projects/4/views/1?pane=issue&itemId=126542903&issue=ThomasDelETML%7CP_Fun%7C4) |
 
 
 ---
@@ -104,8 +129,10 @@ On cherche a montrer qu'il y a un bouton pour importer et comment les donnés so
 
 ## Schéma et architecture
 - Voici le schéma de mon application. On peut y voir l'importation des données.
+
 <img width="867" height="868" alt="image" src="https://github.com/user-attachments/assets/e756bb79-f81b-4416-9dd2-e584607c268e" />
 
+- L'user prend un fichier .csv n'importe ou sur sont pc, le programme prend ce fichier, le copie dans *Plot thoses lines !\bin\Debug\data.csv* et l'utilise selon l'utilisation de l'application. Quand l'user prend un autre fichier d'un endroit de son ordinateur, l'ancien fichier enregistrer sur *Plot thoses lines !\bin\Debug\data.csv* est remplacer.
 
 ---
 
@@ -145,7 +172,7 @@ D’un point de vue personnel, j’ai l’impression d’avoir fait de mon mieux
 Le fait d’avoir réussi à construire une application qui charge, fusionne, valide et trace des données réelles est quelque chose de concret pour moi. Je suis content d’avoir atteint ce niveau de qualité et d’avoir pu intégrer plusieurs concepts différents dans un seul outil fonctionnel: import, traitement, fusion, visualisation, contrôle utilisateur. Ce projet me donne confiance pour la suite, parce que j’ai dépassé un exercice scolaire “simple” et j’ai réalisé une application qui a du sens et de l’utilité potentielle dans le monde réel.
 
 ## Journal de travail
-- Journal de travail réaliser avant GitJournal.
+- Journal de travail réaliser avec GitJournal.
 
 ---
 
@@ -166,4 +193,4 @@ Aussi, si vous pensez que cela a été généré par une IA parce que le frança
 
 ---
 
-# Moreira Thomas, 01.11.2025
+# Moreira Thomas, 13.11.2025
