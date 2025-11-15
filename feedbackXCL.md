@@ -38,4 +38,4 @@
 ## Final
 
 - Les corrections de qualité ont été faites.
-- Je reste toutefois, sceptique par rapport aux contenus techniques de votre code source. Vous affirmer dans votre rapport avoir utilisé l'en mode assistance ciblée, pas délégation complète. Je souhaite m'en assurer en effectuant une revue de code avec vous.
+- Je reste toutefois sceptique par rapport aux contenus techniques de votre code source. Vous affirmez dans votre rapport avoir utilisé l'IA "en mode assistance ciblée, pas délégation complète". Je souhaite m'en assurer en effectuant une revue de code avec vous.
